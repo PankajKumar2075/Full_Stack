@@ -43,4 +43,49 @@ const registerUser = asyncHandler(async (req, res) => {
         );
 });
 
-export { registerUser };
+const loginUser = asyncHandler(async (req, res) => {
+
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+        throw new ApiError(
+            400,
+            "Email and password are required"
+        );
+    }
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+        throw new ApiError(
+            404,
+            "User does not exist"
+        );
+    }
+
+    const isPasswordValid =
+        await user.isPasswordCorrect(password);
+
+    if (!isPasswordValid) {
+        throw new ApiError(
+            401,
+            "Invalid credentials"
+        );
+    }
+
+    const accessToken =
+        user.generateAccessToken();
+
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            {
+                user,
+                accessToken
+            },
+            "Login successful"
+        )
+    );
+});
+
+export { registerUser , loginUser};
