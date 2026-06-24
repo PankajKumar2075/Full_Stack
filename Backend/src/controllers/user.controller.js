@@ -147,6 +147,56 @@ const updateProfile = asyncHandler(async (req, res) => {
     );
 });
 
+const changePassword = asyncHandler(async (req, res) => {
+
+    const {
+        oldPassword,
+        newPassword
+    } = req.body;
+
+    if (newPassword.length < 6) {
+        throw new ApiError(
+            400,
+            "Password must be at least 6 characters"
+        );
+    }
+
+    if (!oldPassword || !newPassword) {
+        throw new ApiError(
+            400,
+            "Old password and new password are required"
+        );
+    }
+
+    const user = await User.findById(
+        req.user._id
+    );
+
+    const isPasswordCorrect =
+        await user.isPasswordCorrect(
+            oldPassword
+        );
+
+    if (!isPasswordCorrect) {
+        throw new ApiError(
+            400,
+            "Invalid old password"
+        );
+    }
+
+    user.password = newPassword;
+
+    await user.save();
+
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            {},
+            "Password changed successfully"
+        )
+    );
+});
+
 const generateAccessAndRefreshTokens =
     async (userId) => {
 
@@ -285,5 +335,5 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 });
 
 export { registerUser , loginUser , getCurrentUser , logoutUser , refreshAccessToken ,
-    updateProfile
+    updateProfile , changePassword
 };
