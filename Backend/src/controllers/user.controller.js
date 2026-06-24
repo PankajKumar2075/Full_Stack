@@ -367,6 +367,43 @@ const getUserProfile = asyncHandler(async (req, res) => {
     );
 });
 
+const updateAvatar = asyncHandler(
+    async (req, res) => {
+
+        const avatarPath =
+            req.file?.path;
+
+        if (!avatarPath) {
+
+            throw new ApiError(
+                400,
+                "Avatar file required"
+            );
+        }
+
+        const user =
+            await User.findByIdAndUpdate(
+                req.user._id,
+                {
+                    avatar: avatarPath
+                },
+                {
+                    new: true
+                }
+            ).select(
+                "-password -refreshToken"
+            );
+
+        return res.status(200).json(
+            new ApiResponse(
+                200,
+                user,
+                "Avatar uploaded successfully"
+            )
+        );
+    }
+);
+
 export { registerUser , loginUser , getCurrentUser , logoutUser , refreshAccessToken ,
-    updateProfile , changePassword , getUserProfile
+    updateProfile , changePassword , getUserProfile ,updateAvatar
 };
