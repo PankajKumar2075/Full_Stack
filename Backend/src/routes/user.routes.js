@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { registerUser , loginUser ,getCurrentUser , logoutUser , refreshAccessToken ,
-    updateProfile , changePassword
+    updateProfile , changePassword , getUserProfile
 } from "../controllers/user.controller.js";
 
 import { verifyJWT } from "../middlewares/auth.middleware.js";
@@ -20,5 +20,7 @@ router.route("/refresh-token").post(refreshAccessToken);
 router.route("/update-profile").patch(verifyJWT,updateProfile);
 
 router.route("/change-password").patch(verifyJWT,changePassword);
+
+router.route("/profile/:username").get(getUserProfile);
 
 export default router;
