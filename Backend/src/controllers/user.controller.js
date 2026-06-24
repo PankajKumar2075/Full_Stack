@@ -112,6 +112,41 @@ const getCurrentUser = asyncHandler(
     }
 );
 
+const updateProfile = asyncHandler(async (req, res) => {
+
+    const {
+        fullName,
+        username,
+        bio,
+        skills
+    } = req.body;
+
+    const updateFields = {};
+
+    if (fullName) updateFields.fullName = fullName;
+    if (username) updateFields.username = username;
+    if (bio) updateFields.bio = bio;
+    if (skills) updateFields.skills = skills;
+
+    const user = await User.findByIdAndUpdate(
+        req.user._id,
+        {
+            $set: updateFields
+        },
+        {
+            new: true
+        }
+    ).select("-password -refreshToken");
+
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            user,
+            "Profile updated successfully"
+        )
+    );
+});
+
 const generateAccessAndRefreshTokens =
     async (userId) => {
 
@@ -249,4 +284,6 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 
 });
 
-export { registerUser , loginUser , getCurrentUser , logoutUser , refreshAccessToken};
+export { registerUser , loginUser , getCurrentUser , logoutUser , refreshAccessToken ,
+    updateProfile
+};
