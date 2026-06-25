@@ -3,7 +3,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import healthCheckRouter from "./routes/healthcheck.routes.js";
 import userRouter from "./routes/user.routes.js";
-import projectRouter from "./routes/project.routes.js";
+import projectRouter from "./routes/project.route.js";
 import postRouter from "./routes/post.route.js";
 
 

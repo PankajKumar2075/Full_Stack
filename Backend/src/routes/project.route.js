@@ -1,7 +1,7 @@
 import { Router } from "express";
 
 import {
-    createProject
+    createProject, getProjects, deleteProject
 }
 from "../controllers/project.controller.js";
 
@@ -16,6 +16,19 @@ router.route("/")
 .post(
     verifyJWT,
     createProject
+);
+
+router.route("/")
+.get(getProjects)
+.post(
+    verifyJWT,
+    createProject
+);
+
+router.route("/:projectId")
+.delete(
+    verifyJWT,
+    deleteProject
 );
 
 export default router;
