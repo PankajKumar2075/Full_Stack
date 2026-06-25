@@ -548,7 +548,43 @@ const unfollowUser = asyncHandler(async (req, res) => {
 });
 
 
+const getFollowers = asyncHandler(async (req, res) => {
+
+    const user = await User.findById(req.user._id)
+        .populate(
+            "followers",
+            "fullName username avatar"
+        );
+
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            user.followers,
+            "Followers fetched successfully"
+        )
+    );
+});
+
+const getFollowing = asyncHandler(async (req, res) => {
+
+    const user = await User.findById(req.user._id)
+        .populate(
+            "following",
+            "fullName username avatar"
+        );
+
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            user.following,
+            "Following fetched successfully"
+        )
+    );
+});
+
+
+
 export { registerUser , loginUser , getCurrentUser , logoutUser , refreshAccessToken ,
     updateProfile , changePassword , getUserProfile ,updateAvatar , searchUsers,
-    followUser,unfollowUser
+    followUser,unfollowUser , getFollowers, getFollowing
 };
