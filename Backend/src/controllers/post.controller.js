@@ -50,6 +50,7 @@ const getAllPosts = asyncHandler(async (req, res) => {
     );
 });
 
+
 const likePost = asyncHandler(async (req, res) => {
 
     const { postId } = req.params;
@@ -90,6 +91,7 @@ const likePost = asyncHandler(async (req, res) => {
     );
 });
 
+
 const unlikePost = asyncHandler(async (req, res) => {
 
     const { postId } = req.params;
@@ -120,9 +122,73 @@ const unlikePost = asyncHandler(async (req, res) => {
     );
 });
 
+
+const getPostById = asyncHandler(async (req, res) => {
+
+    const { postId } = req.params;
+
+    const post = await Post.findById(postId)
+        .populate(
+            "author",
+            "fullName username avatar"
+        );
+
+    if (!post) {
+        throw new ApiError(
+            404,
+            "Post not found"
+        );
+    }
+
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            post,
+            "Post fetched successfully"
+        )
+    );
+});
+
+
+const deletePost = asyncHandler(async (req, res) => {
+
+    const { postId } = req.params;
+
+    const post = await Post.findById(postId);
+
+    if (!post) {
+        throw new ApiError(
+            404,
+            "Post not found"
+        );
+    }
+
+    if (
+        post.author.toString() !==
+        req.user._id.toString()
+    ) {
+        throw new ApiError(
+            403,
+            "You can delete only your own posts"
+        );
+    }
+
+    await Post.findByIdAndDelete(postId);
+
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            {},
+            "Post deleted successfully"
+        )
+    );
+});
+
 export {
     createPost,
     getAllPosts,
     likePost,
-    unlikePost
+    unlikePost,
+    getPostById,
+    deletePost
 };

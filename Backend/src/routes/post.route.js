@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
-import { createPost,getAllPosts,likePost,unlikePost } from "../controllers/post.controller.js";
+import { createPost,getAllPosts,likePost,unlikePost,getPostById,deletePost } from "../controllers/post.controller.js";
 
 const router = Router();
 
@@ -27,6 +27,18 @@ router.post(
     "/unlike/:postId",
     verifyJWT,
     unlikePost
+);
+
+router.get(
+    "/:postId",
+    verifyJWT,
+    getPostById
+);
+
+router.delete(
+    "/:postId",
+    verifyJWT,
+    deletePost
 );
 
 export default router;
