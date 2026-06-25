@@ -455,6 +455,100 @@ const searchUsers = asyncHandler(async (req, res) => {
     );
 });
 
+const followUser = asyncHandler(async (req, res) => {
+
+    const { userId } = req.params;
+
+    if (req.user._id.toString() === userId) {
+        throw new ApiError(
+            400,
+            "You cannot follow yourself"
+        );
+    }
+
+    const userToFollow =
+        await User.findById(userId);
+
+    if (!userToFollow) {
+        throw new ApiError(
+            404,
+            "User not found"
+        );
+    }
+
+    const alreadyFollowing =
+        userToFollow.followers.includes(
+            req.user._id
+        );
+
+    if (alreadyFollowing) {
+        throw new ApiError(
+            400,
+            "Already following user"
+        );
+    }
+
+    await User.findByIdAndUpdate(
+        userId,
+        {
+            $push: {
+                followers: req.user._id
+            }
+        }
+    );
+
+    await User.findByIdAndUpdate(
+        req.user._id,
+        {
+            $push: {
+                following: userId
+            }
+        }
+    );
+
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            {},
+            "User followed successfully"
+        )
+    );
+});
+
+
+const unfollowUser = asyncHandler(async (req, res) => {
+
+    const { userId } = req.params;
+
+    await User.findByIdAndUpdate(
+        userId,
+        {
+            $pull: {
+                followers: req.user._id
+            }
+        }
+    );
+
+    await User.findByIdAndUpdate(
+        req.user._id,
+        {
+            $pull: {
+                following: userId
+            }
+        }
+    );
+
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            {},
+            "User unfollowed successfully"
+        )
+    );
+});
+
+
 export { registerUser , loginUser , getCurrentUser , logoutUser , refreshAccessToken ,
-    updateProfile , changePassword , getUserProfile ,updateAvatar , searchUsers
+    updateProfile , changePassword , getUserProfile ,updateAvatar , searchUsers,
+    followUser,unfollowUser
 };

@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { registerUser , loginUser ,getCurrentUser , logoutUser , refreshAccessToken ,
-    updateProfile , changePassword , getUserProfile , updateAvatar , searchUsers
+    updateProfile , changePassword , getUserProfile , updateAvatar , searchUsers,
+    followUser, unfollowUser
 } from "../controllers/user.controller.js";
 
 import {upload} from "../middlewares/multer.middleware.js";
@@ -27,5 +28,9 @@ router.route("/profile/:username").get(getUserProfile);
 router.route("/avatar").patch(verifyJWT,upload.single("avatar"),updateAvatar);
 
 router.route("/search").get(searchUsers);
+
+router.route("/follow/:userId").post(verifyJWT,followUser);
+
+router.route("/unfollow/:userId").post(verifyJWT,unfollowUser);
 
 export default router;
