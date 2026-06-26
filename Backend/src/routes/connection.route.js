@@ -2,7 +2,8 @@ import { Router } from "express";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 import {
     sendConnectionRequest,
-    acceptConnectionRequest
+    acceptConnectionRequest,
+    rejectConnectionRequest
 } from "../controllers/connection.controller.js";
 
 const router = Router();
@@ -19,11 +20,11 @@ router.patch(
     acceptConnectionRequest
 );
 
-// router.patch(
-//     "/reject/:requestId",
-//     verifyJWT,
-//     rejectConnectionRequest
-// );
+router.patch(
+    "/reject/:requestId",
+    verifyJWT,
+    rejectConnectionRequest
+);
 
 // router.get(
 //     "/pending",

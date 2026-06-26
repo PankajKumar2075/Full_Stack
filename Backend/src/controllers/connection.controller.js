@@ -113,7 +113,50 @@ const acceptConnectionRequest = asyncHandler(async (req, res) => {
     );
 });
 
+const rejectConnectionRequest = asyncHandler(async (req, res) => {
+
+    const { requestId } = req.params;
+
+    const request = await Connection.findById(requestId);
+
+    if (!request) {
+        throw new ApiError(
+            404,
+            "Connection request not found"
+        );
+    }
+
+    // Only receiver can reject
+    if (request.receiver.toString() !== req.user._id.toString()) {
+        throw new ApiError(
+            403,
+            "You are not authorized to reject this request"
+        );
+    }
+
+    // Request must be pending
+    if (request.status !== "pending") {
+        throw new ApiError(
+            400,
+            `Request has already been ${request.status}`
+        );
+    }
+
+    request.status = "rejected";
+
+    await request.save();
+
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            request,
+            "Connection request rejected successfully"
+        )
+    );
+});
+
 export {
     sendConnectionRequest,
-    acceptConnectionRequest
+    acceptConnectionRequest,
+    rejectConnectionRequest
 };
