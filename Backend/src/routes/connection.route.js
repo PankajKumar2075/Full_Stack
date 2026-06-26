@@ -4,7 +4,8 @@ import {
     sendConnectionRequest,
     acceptConnectionRequest,
     rejectConnectionRequest,
-    getPendingRequests
+    getPendingRequests,
+    getMyConnections
 } from "../controllers/connection.controller.js";
 
 const router = Router();
@@ -31,6 +32,12 @@ router.get(
     "/pending",
     verifyJWT,
     getPendingRequests
+);
+
+router.get(
+    "/my-connections",
+    verifyJWT,
+    getMyConnections
 );
 
 export default router;

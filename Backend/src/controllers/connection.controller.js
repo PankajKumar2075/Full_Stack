@@ -176,9 +176,27 @@ const getPendingRequests = asyncHandler(async (req, res) => {
     );
 });
 
+const getMyConnections = asyncHandler(async (req, res) => {
+
+    const user = await User.findById(req.user._id)
+        .populate(
+            "connections",
+            "fullName username avatar bio"
+        );
+
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            user.connections,
+            "Connections fetched successfully"
+        )
+    );
+});
+
 export {
     sendConnectionRequest,
     acceptConnectionRequest,
     rejectConnectionRequest,
-    getPendingRequests
+    getPendingRequests,
+    getMyConnections
 };
