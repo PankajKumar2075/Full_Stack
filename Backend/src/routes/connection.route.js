@@ -3,7 +3,8 @@ import { verifyJWT } from "../middlewares/auth.middleware.js";
 import {
     sendConnectionRequest,
     acceptConnectionRequest,
-    rejectConnectionRequest
+    rejectConnectionRequest,
+    getPendingRequests
 } from "../controllers/connection.controller.js";
 
 const router = Router();
@@ -26,10 +27,10 @@ router.patch(
     rejectConnectionRequest
 );
 
-// router.get(
-//     "/pending",
-//     verifyJWT,
-//     getPendingRequests
-// );
+router.get(
+    "/pending",
+    verifyJWT,
+    getPendingRequests
+);
 
 export default router;

@@ -155,8 +155,30 @@ const rejectConnectionRequest = asyncHandler(async (req, res) => {
     );
 });
 
+const getPendingRequests = asyncHandler(async (req, res) => {
+
+    const requests = await Connection.find({
+        receiver: req.user._id,
+        status: "pending"
+    })
+    .populate(
+        "sender",
+        "fullName username avatar"
+    )
+    .sort({ createdAt: -1 });
+
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            requests,
+            "Pending requests fetched successfully"
+        )
+    );
+});
+
 export {
     sendConnectionRequest,
     acceptConnectionRequest,
-    rejectConnectionRequest
+    rejectConnectionRequest,
+    getPendingRequests
 };
