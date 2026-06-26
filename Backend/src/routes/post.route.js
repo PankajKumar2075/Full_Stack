@@ -1,6 +1,8 @@
 import { Router } from "express";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
-import { createPost,getAllPosts,likePost,unlikePost,getPostById,deletePost,getFeed } from "../controllers/post.controller.js";
+import { createPost,getAllPosts,likePost,unlikePost,getPostById,deletePost,getFeed,
+    searchPosts
+ } from "../controllers/post.controller.js";
 
 const router = Router();
 
@@ -36,6 +38,12 @@ router.get(
 );
 
 router.get(
+    "/search",
+    verifyJWT,
+    searchPosts
+);
+
+router.get(
     "/:postId",
     verifyJWT,
     getPostById
@@ -46,6 +54,7 @@ router.delete(
     verifyJWT,
     deletePost
 );
+
 
 
 

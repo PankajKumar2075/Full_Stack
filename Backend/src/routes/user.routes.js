@@ -27,7 +27,6 @@ router.route("/profile/:username").get(getUserProfile);
 
 router.route("/avatar").patch(verifyJWT,upload.single("avatar"),updateAvatar);
 
-router.route("/search").get(searchUsers);
 
 router.route("/follow/:userId").post(verifyJWT,followUser);
 
@@ -36,5 +35,11 @@ router.route("/unfollow/:userId").post(verifyJWT,unfollowUser);
 router.route("/followers").get(verifyJWT,getFollowers);
 
 router.route("/following").get(verifyJWT,getFollowing);
+
+router.get(
+    "/search",
+    verifyJWT,
+    searchUsers
+);
 
 export default router;

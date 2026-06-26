@@ -248,6 +248,32 @@ const getFeed = asyncHandler(async (req, res) => {
     );
 });
 
+const searchPosts = asyncHandler(async (req, res) => {
+
+    const { keyword } = req.query;
+
+    if (!keyword?.trim()) {
+        throw new ApiError(400, "Search keyword is required");
+    }
+
+    const posts = await Post.find({
+        content: {
+            $regex: keyword,
+            $options: "i"
+        }
+    })
+    .populate("author", "fullName username avatar")
+    .sort({ createdAt: -1 });
+
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            posts,
+            "Posts fetched successfully"
+        )
+    );
+});
+
 export {
     createPost,
     getAllPosts,
@@ -255,5 +281,6 @@ export {
     unlikePost,
     getPostById,
     deletePost,
-    getFeed
+    getFeed,
+    searchPosts
 };

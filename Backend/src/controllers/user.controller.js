@@ -410,50 +410,7 @@ const updateAvatar = asyncHandler(async (req, res) => {
     );
 });
 
-const searchUsers = asyncHandler(async (req, res) => {
 
-    const { keyword } = req.query;
-
-    if (!keyword) {
-        throw new ApiError(
-            400,
-            "Search keyword is required"
-        );
-    }
-
-    const users = await User.find({
-        $or: [
-            {
-                username: {
-                    $regex: keyword,
-                    $options: "i"
-                }
-            },
-            {
-                fullName: {
-                    $regex: keyword,
-                    $options: "i"
-                }
-            },
-            {
-                skills: {
-                    $regex: keyword,
-                    $options: "i"
-                }
-            }
-        ]
-    }).select(
-        "-password -refreshToken"
-    );
-
-    return res.status(200).json(
-        new ApiResponse(
-            200,
-            users,
-            "Users fetched successfully"
-        )
-    );
-});
 
 const followUser = asyncHandler(async (req, res) => {
 
@@ -583,8 +540,47 @@ const getFollowing = asyncHandler(async (req, res) => {
 });
 
 
+const searchUsers = asyncHandler(async (req, res) => {
+
+    const { keyword } = req.query;
+
+    if (!keyword?.trim()) {
+        throw new ApiError(
+            400,
+            "Search keyword is required"
+        );
+    }
+
+    const users = await User.find({
+        $or: [
+            {
+                fullName: {
+                    $regex: keyword,
+                    $options: "i"
+                }
+            },
+            {
+                username: {
+                    $regex: keyword,
+                    $options: "i"
+                }
+            }
+        ]
+    }).select("-password -refreshToken");
+
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            users,
+            "Users fetched successfully"
+        )
+    );
+
+});
+
+
 
 export { registerUser , loginUser , getCurrentUser , logoutUser , refreshAccessToken ,
     updateProfile , changePassword , getUserProfile ,updateAvatar , searchUsers,
-    followUser,unfollowUser , getFollowers, getFollowing
+    followUser,unfollowUser , getFollowers, getFollowing 
 };
