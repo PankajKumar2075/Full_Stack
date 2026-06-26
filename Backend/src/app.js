@@ -5,7 +5,7 @@ import healthCheckRouter from "./routes/healthcheck.routes.js";
 import userRouter from "./routes/user.routes.js";
 import projectRouter from "./routes/project.route.js";
 import postRouter from "./routes/post.route.js";
-
+import connectionRouter from "./routes/connection.route.js";
 
 const app = express();
 
@@ -35,6 +35,11 @@ app.use(
 app.use(
     "/api/v1/posts",
     postRouter
+);
+
+app.use(
+    "/api/v1/connections",
+    connectionRouter
 );
 
 export default app;

@@ -56,6 +56,13 @@ const userSchema = new Schema(
             }
         ],
 
+        connections: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "User"
+            }
+        ],
+
         refreshToken: {
             type: String
         },
