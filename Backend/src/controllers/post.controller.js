@@ -2,6 +2,7 @@ import { Post } from "../models/post.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
+import { Connection } from "../models/connection.model.js";
 
 
 const createPost = asyncHandler(async (req,res)=>{
@@ -184,11 +185,75 @@ const deletePost = asyncHandler(async (req, res) => {
     );
 });
 
+
+const getFeed = asyncHandler(async (req, res) => {
+
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
+
+    const skip = (page - 1) * limit;
+
+    const connections = await Connection.find({
+        status: "accepted",
+        $or: [
+            { sender: req.user._id },
+            { receiver: req.user._id }
+        ]
+    });
+
+    const userIds = [req.user._id];
+
+    connections.forEach((connection) => {
+
+        if (connection.sender.toString() === req.user._id.toString()) {
+            userIds.push(connection.receiver);
+        } else {
+            userIds.push(connection.sender);
+        }
+
+    });
+
+    const posts = await Post.find({
+        owner: {
+            $in: userIds
+        }
+    })
+        .populate(
+            "owner",
+            "fullName username avatar"
+        )
+        .sort({
+            createdAt: -1
+        })
+        .skip(skip)
+        .limit(limit);
+
+    const totalPosts = await Post.countDocuments({
+        owner: {
+            $in: userIds
+        }
+    });
+
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            {
+                currentPage: page,
+                totalPages: Math.ceil(totalPosts / limit),
+                totalPosts,
+                posts
+            },
+            "Feed fetched successfully"
+        )
+    );
+});
+
 export {
     createPost,
     getAllPosts,
     likePost,
     unlikePost,
     getPostById,
-    deletePost
+    deletePost,
+    getFeed
 };
