@@ -5,7 +5,8 @@ import {
     acceptConnectionRequest,
     rejectConnectionRequest,
     getPendingRequests,
-    getMyConnections
+    getMyConnections,
+    removeConnection
 } from "../controllers/connection.controller.js";
 
 const router = Router();
@@ -38,6 +39,12 @@ router.get(
     "/my-connections",
     verifyJWT,
     getMyConnections
+);
+
+router.delete(
+    "/remove/:userId",
+    verifyJWT,
+    removeConnection
 );
 
 export default router;

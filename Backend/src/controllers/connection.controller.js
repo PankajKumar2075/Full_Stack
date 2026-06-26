@@ -193,10 +193,61 @@ const getMyConnections = asyncHandler(async (req, res) => {
     );
 });
 
+const removeConnection = asyncHandler(async (req, res) => {
+
+    const { userId } = req.params;
+
+    if (userId === req.user._id.toString()) {
+        throw new ApiError(
+            400,
+            "You cannot remove yourself"
+        );
+    }
+
+    const user = await User.findById(req.user._id);
+    const otherUser = await User.findById(userId);
+
+    if (!otherUser) {
+        throw new ApiError(
+            404,
+            "User not found"
+        );
+    }
+
+    if (!user.connections.includes(userId)) {
+        throw new ApiError(
+            400,
+            "You are not connected"
+        );
+    }
+
+    user.connections = user.connections.filter(
+        id => id.toString() !== userId
+    );
+
+    otherUser.connections = otherUser.connections.filter(
+        id => id.toString() !== req.user._id.toString()
+    );
+
+    await user.save();
+    await otherUser.save();
+
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            {},
+            "Connection removed successfully"
+        )
+    );
+});
+
+
+
 export {
     sendConnectionRequest,
     acceptConnectionRequest,
     rejectConnectionRequest,
     getPendingRequests,
-    getMyConnections
+    getMyConnections,
+    removeConnection
 };
