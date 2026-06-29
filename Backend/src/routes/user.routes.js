@@ -44,8 +44,10 @@ const router = Router();
  *         description: User registered successfully
  */
 
-router.route("/register").post(registerUser);
-
+router.route("/register").post(
+    upload.single("avatar"),
+    registerUser
+);
 
 /**
  * @swagger
