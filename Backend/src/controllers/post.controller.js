@@ -3,6 +3,8 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { Connection } from "../models/connection.model.js";
+import { createNotification } from "../services/notification.service.js";
+
 
 
 const createPost = asyncHandler(async (req,res)=>{
