@@ -3,6 +3,9 @@ import { User } from "../models/user.model.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
+import { createNotification } from "../services/notification.service.js";
+
+
 
 const sendConnectionRequest = asyncHandler(async (req, res) => {
 
@@ -45,6 +48,12 @@ const sendConnectionRequest = asyncHandler(async (req, res) => {
         receiver: userId
     });
 
+    await createNotification({
+        receiver: receiver._id,
+        sender: req.user._id,
+        type: "connection_request"
+    });
+
     return res.status(201).json(
         new ApiResponse(
             201,
@@ -84,6 +93,12 @@ const acceptConnectionRequest = asyncHandler(async (req, res) => {
     // Accept the request
     request.status = "accepted";
     await request.save();
+
+    await createNotification({
+        receiver: connection.sender,
+        sender: req.user._id,
+        type: "connection_accepted"
+    });
 
     // Add users to each other's connections
     await User.findByIdAndUpdate(

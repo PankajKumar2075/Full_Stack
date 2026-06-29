@@ -83,6 +83,13 @@ const likePost = asyncHandler(async (req, res) => {
 
     post.likes.push(req.user._id);
 
+    await createNotification({
+        receiver: post.author,
+        sender: req.user._id,
+        type: "like",
+        post: post._id
+    });
+
     await post.save();
 
     return res.status(200).json(

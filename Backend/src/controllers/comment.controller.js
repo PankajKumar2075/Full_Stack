@@ -3,6 +3,8 @@ import { Post } from "../models/post.model.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
+import { createNotification } from "../services/notification.service.js";
+
 
 const addComment = asyncHandler(async (req, res) => {
 
@@ -29,6 +31,13 @@ const addComment = asyncHandler(async (req, res) => {
         content,
         post: postId,
         owner: req.user._id
+    });
+
+    await createNotification({
+        receiver: post.author,
+        sender: req.user._id,
+        type: "comment",
+        post: post._id
     });
 
     return res.status(201).json(
