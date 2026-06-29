@@ -4,12 +4,28 @@ import { ApiError } from "../utils/ApiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { Connection } from "../models/connection.model.js";
 import { createNotification } from "../services/notification.service.js";
+import { uploadOnCloudinary } from "../utils/cloudinary.js";
+
 
 
 
 const createPost = asyncHandler(async (req,res)=>{
 
     const { content } = req.body;
+
+    const mediaLocalPath = req.file?.path;
+
+    let mediaUrl = "";
+
+    if (mediaLocalPath) {
+
+        const media = await uploadOnCloudinary(mediaLocalPath);
+
+        if (media) {
+            mediaUrl = media.secure_url;
+        }
+
+    }
 
     if(!content){
         throw new ApiError(
@@ -20,7 +36,8 @@ const createPost = asyncHandler(async (req,res)=>{
 
     const post = await Post.create({
         content,
-        author:req.user._id
+        author: req.user._id,
+        media: mediaUrl
     });
 
     return res.status(201).json(

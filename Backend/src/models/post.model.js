@@ -23,7 +23,12 @@ const postSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: "User"
         }
-    ]
+    ],
+
+    media: {
+        type: String,
+        default: ""
+    },
 },
 {
     timestamps: true

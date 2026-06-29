@@ -4,6 +4,10 @@ import { createPost,getAllPosts,likePost,unlikePost,getPostById,deletePost,getFe
     searchPosts
  } from "../controllers/post.controller.js";
 
+ import { upload } from "../middlewares/multer.middleware.js";
+
+
+
 const router = Router();
 
 
@@ -14,8 +18,9 @@ router.get(
 );
 
 router.post(
-    "/create",
+    "/",
     verifyJWT,
+    upload.single("media"),
     createPost
 );
 
