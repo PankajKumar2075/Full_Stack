@@ -9,7 +9,66 @@ import { verifyJWT } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
+/**
+ * @swagger
+ * /users/register:
+ *   post:
+ *     summary: Register a new user
+ *     tags:
+ *       - Users
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - fullName
+ *               - username
+ *               - email
+ *               - password
+ *             properties:
+ *               fullName:
+ *                 type: string
+ *               username:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *               avatar:
+ *                 type: string
+ *                 format: binary
+ *     responses:
+ *       201:
+ *         description: User registered successfully
+ */
+
 router.route("/register").post(registerUser);
+
+
+/**
+ * @swagger
+ * /users/login:
+ *   post:
+ *     summary: Login User
+ *     tags:
+ *       - Users
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Login successful
+ */
 
 router.route("/login").post(loginUser);
 

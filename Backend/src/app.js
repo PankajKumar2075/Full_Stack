@@ -8,6 +8,8 @@ import postRouter from "./routes/post.route.js";
 import connectionRouter from "./routes/connection.route.js";
 import commentRouter from "./routes/comment.route.js";
 import notificationRouter from "./routes/notification.route.js";
+import swaggerUi from "swagger-ui-express";
+import swaggerSpec from "./docs/swagger.js";
 
 
 
@@ -58,6 +60,10 @@ app.use(
 );
 
 
-
+app.use(
+    "/api-docs",
+    swaggerUi.serve,
+    swaggerUi.setup(swaggerSpec)
+);
 
 export default app;
